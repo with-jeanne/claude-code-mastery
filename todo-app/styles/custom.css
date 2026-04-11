@@ -1,0 +1,105 @@
+/* 추가 커스텀 스타일 */
+
+/* 스크롤바 커스터마이징 */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f3f4f6;
+}
+
+.dark ::-webkit-scrollbar-track {
+    background: #1f2937;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9ca3af;
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #4b5563;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+    background: #6b7280;
+}
+
+/* 포커스 상태 */
+button:focus,
+input:focus,
+select:focus {
+    outline: none;
+}
+
+/* 버튼 호버 이펙트 */
+button {
+    transition: all 0.2s ease;
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* 입력창 이전 상태 */
+input[type="text"],
+select {
+    transition: all 0.2s ease;
+}
+
+/* 할일 항목 호버 */
+.todo-item {
+    transition: all 0.2s ease;
+}
+
+.todo-item:hover {
+    background-color: #f9fafb;
+}
+
+.dark .todo-item:hover {
+    background-color: #111827;
+}
+
+/* 아이콘 애니메이션 */
+#theme-toggle:hover i {
+    transform: rotate(20deg);
+}
+
+#theme-icon {
+    transition: transform 0.3s ease;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 640px) {
+    .flex-wrap {
+        flex-direction: column;
+    }
+
+    .tab-btn {
+        width: 100%;
+    }
+
+    #clear-completed-btn {
+        width: 100%;
+        margin-left: 0 !important;
+        margin-top: 0.5rem;
+    }
+
+    .grid-cols-3 {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* 그라데이션 배경 */
+header {
+    background-image: linear-gradient(135deg, #3b82f6 0%, #a855f7 100%);
+}
+
+.dark header {
+    background-image: linear-gradient(135deg, #1e40af 0%, #6b21a8 100%);
+}

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ko" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="TODO 앱 - 할일 관리 웹 애플리케이션">
+    <title>TODO 앱 - 할일 관리</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+
+    <!-- Font Awesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles/custom.css">
+
+    <style>
+        /* 애니메이션 */
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .todo-item { animation: slideIn 0.3s ease-out; }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        .todo-item.deleting { animation: fadeOut 0.3s ease-out forwards; }
+
+        /* 체크박스 스타일 */
+        .checkbox {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3b82f6;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: white;
+        }
+        .dark .checkbox { border-color: #60a5fa; background-color: #1e3a8a; }
+        .checkbox:checked {
+            background-color: #3b82f6;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='white'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 14px;
+        }
+
+        /* 우선순위 배지 */
+        .priority-high { @apply text-red-500 dark:text-red-400; }
+        .priority-medium { @apply text-yellow-500 dark:text-yellow-400; }
+        .priority-low { @apply text-green-500 dark:text-green-400; }
+
+        /* 완료된 항목 */
+        .completed .todo-text {
+            @apply line-through text-gray-400 dark:text-gray-500;
+        }
+
+        /* 탭 버튼 */
+        .tab-btn {
+            @apply px-4 py-2 rounded-lg transition-all;
+        }
+        .tab-btn.active {
+            @apply bg-blue-500 text-white dark:bg-blue-600;
+        }
+        .tab-btn:not(.active) {
+            @apply bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600;
+        }
+
+        /* 입력창 포커스 */
+        input:focus, select:focus {
+            @apply outline-none ring-2 ring-blue-500 dark:ring-blue-400;
+        }
+    </style>
+</head>
+<body class="bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+    <div class="min-h-screen flex flex-col">
+        <!-- 헤더 -->
+        <header class="bg-gradient-to-r from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 text-white shadow-lg">
+            <div class="container mx-auto px-4 py-6 max-w-4xl flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <i class="fas fa-list-check text-2xl"></i>
+                    <h1 class="text-3xl font-bold">TODO 앱</h1>
+                </div>
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-white hover:bg-opacity-20 transition" aria-label="테마 변경">
+                    <i id="theme-icon" class="fas fa-moon text-xl"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="flex-1 container mx-auto px-4 py-8 max-w-4xl">
+            <!-- 입력 영역 -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+                <div class="flex gap-2 mb-4">
+                    <input
+                        id="todo-input"
+                        type="text"
+                        placeholder="할일을 입력하세요... (엔터로 추가)"
+                        class="flex-1 px-4 py-2 bg-gray-100 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg"
+                        autocomplete="off">
+                    <select
+                        id="priority-select"
+                        class="px-4 py-2 bg-gray-100 dark:bg-gray-700 border-2 border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer">
+                        <option value="high">🔴 높음</option>
+                        <option value="medium" selected>🟡 보통</option>
+                        <option value="low">🟢 낮음</option>
+                    </select>
+                    <button
+                        id="add-btn"
+                        class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition">
+                        <i class="fas fa-plus mr-2"></i>추가
+                    </button>
+                </div>
+            </div>
+
+            <!-- 필터 탭 -->
+            <div class="flex gap-2 mb-6 flex-wrap items-center">
+                <div class="flex gap-2">
+                    <button class="tab-btn active" data-filter="all">
+                        <i class="fas fa-list mr-2"></i>전체
+                    </button>
+                    <button class="tab-btn" data-filter="active">
+                        <i class="fas fa-spinner mr-2"></i>진행중
+                    </button>
+                    <button class="tab-btn" data-filter="completed">
+                        <i class="fas fa-check-circle mr-2"></i>완료
+                    </button>
+                </div>
+                <button
+                    id="clear-completed-btn"
+                    class="ml-auto px-4 py-2 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-300 rounded-lg hover:bg-red-200 dark:hover:bg-red-800 transition text-sm">
+                    <i class="fas fa-trash mr-2"></i>완료 항목 삭제
+                </button>
+            </div>
+
+            <!-- 할일 목록 -->
+            <div id="todo-container" class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+                <ul id="todo-list" class="divide-y dark:divide-gray-700">
+                    <!-- JS로 렌더링됨 -->
+                </ul>
+                <!-- 빈 상태 -->
+                <div id="empty-state" class="p-8 text-center text-gray-500 dark:text-gray-400">
+                    <i class="fas fa-inbox text-4xl mb-4 opacity-50"></i>
+                    <p class="text-lg">할일이 없습니다!</p>
+                </div>
+            </div>
+
+            <!-- 통계 -->
+            <div class="mt-6 grid grid-cols-3 gap-4">
+                <div class="bg-blue-50 dark:bg-blue-900 dark:bg-opacity-20 p-4 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-blue-600 dark:text-blue-400" id="total-count">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">전체</div>
+                </div>
+                <div class="bg-yellow-50 dark:bg-yellow-900 dark:bg-opacity-20 p-4 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-yellow-600 dark:text-yellow-400" id="active-count">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">진행중</div>
+                </div>
+                <div class="bg-green-50 dark:bg-green-900 dark:bg-opacity-20 p-4 rounded-lg text-center">
+                    <div class="text-2xl font-bold text-green-600 dark:text-green-400" id="completed-count">0</div>
+                    <div class="text-sm text-gray-600 dark:text-gray-400">완료</div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 푸터 -->
+        <footer class="bg-gray-100 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 mt-12">
+            <div class="container mx-auto px-4 py-6 max-w-4xl text-center text-gray-600 dark:text-gray-400 text-sm">
+                <p>✨ TODO 앱으로 생산성을 높이세요!</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript 스크립트 -->
+    <script src="js/storage.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

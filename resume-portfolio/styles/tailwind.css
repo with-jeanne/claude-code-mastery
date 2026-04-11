@@ -1,0 +1,188 @@
+/* 기술스택 뱃지 스타일 */
+.skill-badge {
+    @apply inline-block px-4 py-2 bg-blue-100 dark:bg-blue-900 text-primary dark:text-blue-300 rounded-full text-sm font-medium transition duration-300 transform hover:scale-105 hover:shadow-md cursor-default;
+}
+
+/* 반응형 텍스트 스타일 */
+@media (max-width: 768px) {
+    h1 {
+        @apply text-4xl;
+    }
+
+    h2 {
+        @apply text-3xl;
+    }
+
+    .nav-link {
+        @apply text-base;
+    }
+}
+
+/* 스크롤바 커스터마이징 */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    @apply bg-gray-100 dark:bg-gray-800;
+}
+
+::-webkit-scrollbar-thumb {
+    @apply bg-gray-400 dark:bg-gray-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500 dark:bg-gray-500;
+}
+
+/* Firefox 스크롤바 */
+* {
+    scrollbar-color: rgb(156, 163, 175) rgb(243, 244, 246);
+    scrollbar-width: thin;
+}
+
+.dark * {
+    scrollbar-color: rgb(75, 85, 99) rgb(31, 41, 55);
+}
+
+/* 링크 밑줄 애니메이션 */
+a {
+    position: relative;
+}
+
+/* 카드 hover 이펙트 */
+.hover\:shadow-md {
+    transition: all 0.3s ease;
+}
+
+/* 섹션 배경 그라데이션 */
+section {
+    position: relative;
+}
+
+/* 모바일 메뉴 애니메이션 */
+#mobile-menu {
+    animation: slideDown 0.3s ease-out;
+}
+
+#mobile-menu.hidden {
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+}
+
+/* 액티브 네비게이션 링크 */
+.nav-link.active {
+    @apply text-primary dark:text-blue-400 font-semibold border-b-2 border-primary dark:border-blue-400 pb-1;
+}
+
+/* 경력 카드 호버 이펙트 */
+.border-l-4 {
+    transition: all 0.3s ease;
+}
+
+.border-l-4:hover {
+    @apply pl-8 shadow-lg;
+}
+
+/* 기술 카드 호버 이펙트 */
+.hover\:shadow-lg {
+    transition: all 0.3s ease;
+}
+
+/* 버튼 호버 이펙트 */
+button {
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    transform: translateY(-2px);
+}
+
+/* 다크모드 전환 애니메이션 */
+body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 섹션 padding 반응형 조정 */
+@media (max-width: 640px) {
+    section {
+        @apply py-12;
+    }
+
+    .container {
+        @apply px-4;
+    }
+}
+
+/* 프로필 아바타 애니메이션 */
+.rounded-full {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* 텍스트 그라데이션 (선택사항) */
+.bg-gradient-to-b {
+    transition: background 0.3s ease;
+}
+
+/* 포커스 상태 개선 (접근성) */
+a:focus,
+button:focus {
+    @apply outline-2 outline-offset-2 outline-primary dark:outline-blue-400;
+}
+
+/* 터치 대상 최소 크기 (44x44px) */
+button,
+a[href] {
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 섹션 ID 링크 스크롤 오프셋 */
+:target {
+    scroll-margin-top: 80px;
+}
+
+/* 인쇄 스타일 */
+@media print {
+    header,
+    #progress-bar {
+        @apply hidden;
+    }
+
+    body {
+        @apply bg-white text-black;
+    }
+}
